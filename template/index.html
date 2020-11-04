@@ -48,7 +48,7 @@
                     <input name="itemName" type="text" required>
                 </div>
                 <div id="quantity">
-                    <label for="quantity">購入数*</label>
+                    <label for="quantity">個数*</label>
                     <br />
                     <input name="quantity" type="number" required>
                 </div>
@@ -85,7 +85,7 @@
                 <th colspan="4">店舗</th>
                 <th>カテゴリー</th>
                 <th>購入品</th>
-                <th>購入数</th>
+                <th>個数</th>
                 <th>金額（税込）</th>
                 <th>ステータス</th>
                 <th class="noBorder"></th>
@@ -122,7 +122,7 @@
                     </button>
                 </td>
                 <td class="noBorder">
-                    <button class="addUsedItemBtn" type="submit" data-id="{{.ID}}" data-requantity="{{.RemainingQuantity}}" {{- if or (eq .ItemStatus "使用済") (eq .ItemStatus "廃棄")}} disabled="disabled"{{- end}}>
+                    <button class="addUsedItemBtn" type="submit" data-id="{{.ID}}" {{- if or (eq .ItemStatus "使用済") (eq .ItemStatus "廃棄")}} disabled="disabled"{{- end}}>
                         入力
                     </button>
                 </td>
@@ -158,8 +158,8 @@
                     <label><input type="radio" name="timing" value="003">夜</label>
                     <label><input type="radio" name="timing" value="004" checked>他</label>
                 </div>
-                <label for="quantity">使用数*</label>
-                <input name="quantity" type="number" max="0" required>
+                <label for="quantity">個数*</label>
+                <input name="quantity" type="number" required>
                 <br />
                 <label for="nemu">メニュー</label>
                 <input name="nemu" type="text">
