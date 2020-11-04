@@ -105,38 +105,40 @@
                 <th class="noBorder">購入品</th>
                 <th class="noBorder">使用数</th>
             </tr>
-            {{- range .}}
-            <tr class="purchasedItem {{- if or (eq .ItemStatus "使用済") (eq .ItemStatus "廃棄")}} grayOut {{- end}}">
-                <td>{{.Month}}</td>
-                <td>{{.PurchasedOn | formatDate}}</td>
-                <td colspan="4" class="noCenter">{{.Shop}}</td>
-                <td>{{.Category}}</td>
-                <td class="noCenter">{{.ItemName}}</td>
-                <td>{{.Quantity}}</td>
-                <td>{{.PriceIncludingTax | formatYen}}</td>
-                <td>{{.ItemStatus}}
-                    {{- if eq .ItemStatus "使用中" }}<br />{{.UsedRate}}</td>{{- end}}
+            {{- range $pi := . }}
+            <tr class="purchasedItem {{- if or (eq $pi.ItemStatus "使用済") (eq $pi.ItemStatus "廃棄")}} grayOut {{- end}}">
+                <td>{{$pi.Month}}</td>
+                <td>{{$pi.PurchasedOn | formatDate}}</td>
+                <td colspan="4" class="noCenter">{{$pi.Shop}}</td>
+                <td>{{$pi.Category}}</td>
+                <td class="noCenter">{{$pi.ItemName}}</td>
+                <td>{{$pi.Quantity}}</td>
+                <td>{{$pi.PriceIncludingTax | formatYen}}</td>
+                <td>{{$pi.ItemStatus}}
+                    {{- if eq $pi.ItemStatus "使用中" }}<br />{{$pi.UsedRate}}</td>{{- end}}
                 <td class="noBorder">
                     <button class="updatePurchasedItemBtn" type="submit">
                         変更
                     </button>
                 </td>
                 <td class="noBorder">
-                    <button class="addUsedItemBtn" type="submit" data-id="{{.ID}}" data-requantity="{{.RemainingQuantity}}" {{- if or (eq .ItemStatus "使用済") (eq .ItemStatus "廃棄")}} disabled="disabled"{{- end}}>
+                    <button class="addUsedItemBtn" type="submit" data-id="{{$pi.ID}}" data-requantity="{{$pi.RemainingQuantity}}" {{- if or (eq $pi.ItemStatus "使用済") (eq $pi.ItemStatus "廃棄")}} disabled="disabled"{{- end}}>
                         入力
                     </button>
                 </td>
             </tr>
-            {{- range .UsedItems}}
-            <tr class="used">
+            {{- range $ui := $pi.UsedItems}}
+            <tr class="used　{{- if or (eq $pi.ItemStatus "使用済") (eq $pi.ItemStatus "廃棄")}} grayOut {{- end}}">
                 <td class="noBorder"></td>
-                <td>{{.UsedOn | formatDate}}</td>
-                <td>{{.Morning}}</td>
-                <td>{{.Lunch}}</td>
-                <td>{{.Dinner}}</td>
-                <td>{{.Others}}</td>
-                <td colspan="2" class="noCenter">{{.Menu}}</td>
-                <td>{{.Quantity}}</td>
+                <td>{{$ui.UsedOn | formatDate}}</td>
+                <td>{{$ui.Morning}}</td>
+                <td>{{$ui.Lunch}}</td>
+                <td>{{$ui.Dinner}}</td>
+                <td>{{$ui.Others}}</td>
+                <td colspan="2" class="noCenter">{{$ui.Menu}}</td>
+                <td>{{$ui.Quantity}}</td>
+                <td class="noBorder"></td>
+                <td class="noBorder"></td>
                 <td class="noBorder"></td>
                 <td class="noBorder"></td>
             </tr>
