@@ -33,7 +33,10 @@ $(function(){
     $(".addUsedItemBtn").click(function(){
         //購入品IDを補足
         PurchaseItemID = $(this).data('id');
-        $('input[name="purchaseItemID"]').val(PurchaseItemID)
+        $('#addUsedItemDialog input[name="purchaseItemID"]').val(PurchaseItemID);
+        //残個数を個数の最大値に設定
+        RemainingQuantity = $(this).data('requantity');
+        $('#addUsedItemDialog input[name="quantity"]').attr("max",RemainingQuantity);
         
         // ダイアログを表示する
         $("#addUsedItemDialog").dialog("open");
