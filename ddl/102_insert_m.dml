@@ -1,0 +1,38 @@
+/* ------------------------------------- マスタ群 ------------------------------------- */
+
+/* 【マスタ】カテゴリー */
+INSERT INTO m_categorys
+    (id,name,created_at,updated_at)
+values 
+    (001,'食品',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+    (002,'日用品',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+;
+
+/* 【マスタ】ユーザ */
+INSERT INTO m_users
+    (id,name,is_deleted,created_at,updated_at)
+values
+    (00001,'admin',false,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+    (00002,'ayaka',false,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+    (00003,'dona',false,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+;
+
+/* 【マスタ】購入品ステータス */
+INSERT INTO m_item_status
+    (id,status,created_at,updated_at)
+values
+    (001,'未使用',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+    (002,'使用中',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+    (003,'使用済',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+    (255,'廃棄',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+;
+
+/* 【マスタ】使用タイミング */
+INSERT INTO m_used_timing
+    (id,timing,created_at,updated_at)
+values
+    (001,'朝',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+    (002,'昼',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+    (003,'夜',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+    (004,'他',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+;

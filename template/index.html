@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+
+        <link rel="stylesheet" type="text/css" href="../resources/css/index.css">
+        <!-- jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <!-- jQuery UI -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+        <title>購入品管理</title>
+    </head>
+    <body>
+        <script type="text/javascript" src="../resources/js/script.js"></script>
+        <form method="POST" action="/addPurchasedItem">
+            <div id="form1">
+                <div id="month">
+                    <label for="month">所属月*</label>
+                    <br />
+                    <input name="month" type="month" required>
+                </div>
+                <div id="purchasedOn">
+                    <label for="purchasedOn">購入日*</label>
+                    <br />
+                    <input name="purchasedOn" type="date" required>
+                </div>
+                <div id="shop">
+                    <label for="shop">店舗</label>
+                    <br />
+                    <input name="shop" type="text">
+                </div>
+            </div>
+            <div id="form2">
+                <div id="category">
+                    <label for="category">カテゴリー</label>
+                    <br />
+                    <select name="category">
+                        <option value="">カテゴリーを選択</option>
+                        <option value="001">食品</option>
+                        <option value="002">日用品</option>
+                    </select>
+               </div>
+               <div id="itemName">
+                    <label for="itemName">購入品*</label>
+                    <br />
+                    <input name="itemName" type="text" required>
+                </div>
+                <div id="quantity">
+                    <label for="quantity">個数*</label>
+                    <br />
+                    <input name="quantity" type="number" required>
+                </div>
+                <span id="excTaxSet">
+                    <div id="excTax">
+                    <label for="excTax">金額（税抜）</label>
+                    <br />
+                        <input name="excTax" type="number">
+                    </div>
+                    <div id="tax8">
+                        8%
+                        <input name="tax" type="radio" value="0.08">
+                    </div>
+                    <div id="tax10">
+                        10%
+                        <input name="tax" type="radio" value="0.1">
+                    </div>
+                </span>
+                <div id="incTax">
+                    <label for="incTax">金額（税込）</label>
+                    <br />
+                    <input name="incTax" type="number">
+                </div>
+                <input id="addPurchasedItemBtn" type="submit" value="追加">
+            </div>
+        </form>
+
+        <hr />
+
+        <table id="purchasedList" border="1pm solid">
+            <tr class="title">
+                <th>所属月</th>
+                <th>購入日</th>
+                <th colspan="4">店舗</th>
+                <th>カテゴリー</th>
+                <th>購入品</th>
+                <th>個数</th>
+                <th>金額（税込）</th>
+                <th>ステータス</th>
+                <th class="noBorder"></th>
+                <th class="noBorder"></th>
+            </tr>
+            <tr class="used">
+                <th></th>
+                <th>使用日</th>
+                <th>朝</th>
+                <th>昼</th>
+                <th>夜</th>
+                <th>他</th>
+                <th colspan="2">メニュー</th>
+                <th>使用数</th>
+                <th></th>
+                <th></th>
+                <th class="noBorder">購入品</th>
+                <th class="noBorder">使用数</th>
+            </tr>
+            {{- range .}}
+            <tr class="purchasedItem {{- if or (eq .ItemStatus "使用済") (eq .ItemStatus "廃棄")}} grayOut {{- end}}">
+                <td>{{.Month}}</td>
+                <td>{{.PurchasedOn | formatDate}}</td>
+                <td colspan="4" class="noCenter">{{.Shop}}</td>
+                <td>{{.Category}}</td>
+                <td class="noCenter">{{.ItemName}}</td>
+                <td>{{.Quantity}}</td>
+                <td>{{.PriceIncludingTax | formatYen}}</td>
+                <td>{{.ItemStatus}}
+                    {{- if eq .ItemStatus "使用中" }}<br />{{.UsedRate}}</td>{{- end}}
+                <td class="noBorder">
+                    <button class="updatePurchasedItemBtn" type="submit">
+                        変更
+                    </button>
+                </td>
+                <td class="noBorder">
+                    <button class="addUsedItemBtn" type="submit" data-id="{{.ID}}" {{- if or (eq .ItemStatus "使用済") (eq .ItemStatus "廃棄")}} disabled="disabled"{{- end}}>
+                        入力
+                    </button>
+                </td>
+            </tr>
+            {{- range .UsedItems}}
+            <tr class="used">
+                <td class="noBorder"></td>
+                <td>{{.UsedOn | formatDate}}</td>
+                <td>{{.Morning}}</td>
+                <td>{{.Lunch}}</td>
+                <td>{{.Dinner}}</td>
+                <td>{{.Others}}</td>
+                <td colspan="2" class="noCenter">{{.Menu}}</td>
+                <td>{{.Quantity}}</td>
+                <td class="noBorder"></td>
+                <td class="noBorder"></td>
+            </tr>
+            {{- end}}
+            {{- end}}
+        </table>
+        <!-- modal dialog -->
+        <div id="addUsedItemDialog" title="使用した数やメニューを入力してください">
+            <form method="POST" action="/addUsedItem">
+                <label for="purchaseItemID">購入品ID</label>
+                <input type="number" name="purchaseItemID" readonly>
+                <br />
+                <label for="usedOn">使用日*</label>
+                <input name="usedOn" type="date" required>
+                <br />
+                <div class="timing">
+                    <label><input type="radio" name="timing" value="001">朝</label>
+                    <label><input type="radio" name="timing" value="002">昼</label>
+                    <label><input type="radio" name="timing" value="003">夜</label>
+                    <label><input type="radio" name="timing" value="004" checked>他</label>
+                </div>
+                <label for="quantity">個数*</label>
+                <input name="quantity" type="number" required>
+                <br />
+                <label for="nemu">メニュー</label>
+                <input name="nemu" type="text">
+                <br />
+                <input type="submit" value="入力">
+            </form>
+        </div>
+    </body>
+</html>

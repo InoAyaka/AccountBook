@@ -1,0 +1,26 @@
+/* ------------------------------------- テーブル群 ------------------------------------- */
+
+/* 【テーブル】月予算 */
+INSERT INTO t_budgets
+    (id,month,budget,created_at,created_user_id,updated_at,updated_user_id)
+values 
+    (001,'2020/11',40000,CURRENT_TIMESTAMP,00001,CURRENT_TIMESTAMP,00001),
+    (002,'2020/12',30000,CURRENT_TIMESTAMP,00001,CURRENT_TIMESTAMP,00001)
+;
+
+/* 【テーブル】購入品 */
+INSERT INTO t_purchased_items
+    (month, purchased_on, shop, category_id, item_name, quantity, price_including_tax, item_status_id, is_deleted, created_at, created_user_id, updated_at, updated_user_id)
+VALUES
+    ('2020-11','2020/10/27','イトーヨーカドーネットスーパー',001,'コンソメ顆粒',40,366,002,0,CURRENT_TIMESTAMP,00001,CURRENT_TIMESTAMP,00001),
+    ('2020-11','2020/11/02','マツモトキヨシ',002,'トイレットペーパー',12,398,001,0,CURRENT_TIMESTAMP,00001,CURRENT_TIMESTAMP,00001),
+    ('2020-11','2020/10/27','LOHACO',001,'米',5,1290,001,0,CURRENT_TIMESTAMP,00001,CURRENT_TIMESTAMP,00001)
+;
+
+/* 【テーブル】使用品 */
+INSERT INTO t_used
+    (used_on, used_timing_id, purchase_item_id, quantity, menu, is_deleted, created_at, created_user_id, updated_at, updated_user_id)
+VALUES
+    ('2020/10/28',003,0000000001,3,'ポトフ',0,CURRENT_TIMESTAMP,00001,CURRENT_TIMESTAMP,00001),
+    ('2020/10/30',002,0000000001,1,'オムライス',0,CURRENT_TIMESTAMP,00001,CURRENT_TIMESTAMP,00001)
+;

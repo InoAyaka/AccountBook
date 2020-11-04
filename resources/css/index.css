@@ -1,0 +1,135 @@
+body {
+    font-family: "Helvetica Neue",
+      Arial,
+      "Hiragino Kaku Gothic ProN",
+      "Hiragino Sans",
+      Meiryo,
+      sans-serif;
+    font-size: 14px;
+}
+
+/*　入力フォームの設定 */
+form #form1,#form2{
+    display: flex;
+}
+
+form div{
+    padding: 2px 5px;
+}
+
+form #itemName input,#shop input{
+    width: 250px;
+}
+
+form #quantity input{
+    width: 50px;
+}
+
+form #form2 #category,#itemName,#quantity{
+    margin-top: 7px;
+}
+
+form #excTaxSet{
+    border:1px dotted red;
+    border-radius: 5px;
+    display: flex;
+    padding: 5px 3px;
+}
+
+form #incTax{
+    border:1px dotted red;
+    border-radius: 5px;
+    padding: 5px 3px;
+    margin-left: 5px;
+}
+
+form #tax8,#tax10{
+    width: 30px;
+    text-align: center;
+    padding: 3px 2px;
+}
+
+form #tax8 input,#tax10 input{
+    margin-top: 7px;
+}
+
+form #excTax input,#incTax input{
+    width: 100px;
+}
+
+form #excTax input{
+    padding-right: 0px;
+}
+
+#addPurchasedItemBtn{
+    width: 100px;
+    height: 25px;
+    border-radius: 5px;
+    margin-left: 20px;
+    margin-top: 30px;
+    border: none;
+    background-color: #4472C4;
+    color: #ffffff;
+}
+
+
+/* 一覧の設定 */
+table{
+    border-collapse: collapse;
+    border: none;
+}
+table th,td{
+    padding:5px 7px;
+    font-weight: 400;
+}
+
+#purchasedList .title th:not(.noBorder){
+    background-color: #B4C7E7;
+}
+
+#purchasedList .used th:not(.noBorder){
+    background-color:#DAE3F3;
+    border-bottom: double;
+}
+
+#purchasedList td,th{
+    text-align: center;
+    border: solid 1px;
+}
+
+#purchasedList .noCenter{
+    text-align: left;
+}
+
+#purchasedList .grayOut{
+    background-color:#D9D9D9;
+}
+
+#purchasedList .noBorder{
+    border: none;
+    background-color: transparent;
+}
+
+.updatePurchasedItemBtn{
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #4472C4;
+    color: #ffffff;
+    font-size: 12px;
+    line-height: 14px;
+}
+
+.addUsedItemBtn{
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #548235;
+    color: #ffffff;
+    font-size: 12px;
+    line-height: 14px;
+}
+
+.addUsedItemBtn:disabled{
+    background-color: #A6A6A6;
+}
