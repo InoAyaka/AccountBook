@@ -3,6 +3,8 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -19,6 +21,7 @@ type Item struct {
 	Quantity          uint16
 	PriceIncludingTax string
 	ItemStatus        string
+	IsDeleted         bool
 	RemainingQuantity uint16
 	UsedRate          string
 	UsedItems         []usedItem
@@ -76,6 +79,57 @@ func (ab *accountBook) addPurchasedItem(i *Item, tx *sql.Tx) error {
 	)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (ab *accountBook) updatePurchasedItem(id int, sqlSet map[string]string, tx *sql.Tx) error {
+
+	var sql strings.Builder
+
+	sql.WriteString("UPDATE t_purchased_items SET ")
+
+	for k, v := range sqlSet {
+		sql.WriteString(k + " = " + v + ", ")
+	}
+	sql.WriteString("updated_at = CURRENT_TIMESTAMP ")
+
+	sql.WriteString("WHERE id = " + strconv.Itoa(id))
+
+	_, err := tx.Exec(sql.String())
+	if err != nil {
+		return err
+	}
+
+	//個数の変更があった場合のみ、ステータスの更新を行う
+	if s, ok := sqlSet["quantity"]; ok {
+		inputQuantity, err := strconv.Atoi(s)
+		if err != nil {
+			return err
+		}
+
+		_, usedQuantity, err := ab.getUsedItems(uint32(id))
+		if err != nil {
+			return err
+		}
+
+		var itemStatus int
+		if 0 < usedQuantity && usedQuantity < uint16(inputQuantity) {
+			itemStatus = 2
+		} else if usedQuantity >= uint16(inputQuantity) {
+			itemStatus = 3
+		} else {
+			return nil
+		}
+
+		_, err = tx.Exec(updateStatusSQL,
+			itemStatus,
+			id,
+		)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
