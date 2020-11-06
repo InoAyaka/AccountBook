@@ -31,6 +31,7 @@ func main() {
 	http.Handle("/resources/", http.StripPrefix("/resources/", http.FileServer(http.Dir("resources/"))))
 	http.HandleFunc("/", ab.getListHandler)
 	http.HandleFunc("/addPurchasedItem", ab.addPurchasedItemHandler)
+	http.HandleFunc("/updatePurchasedItem", ab.updatePurchasedItemHandler)
 	http.HandleFunc("/addUsedItem", ab.addUsedItemHandler)
 
 	//サーバの起動

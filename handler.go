@@ -153,6 +153,96 @@ func (ab *accountBook) addPurchasedItemHandler(w http.ResponseWriter, r *http.Re
 
 }
 
+//購入品 変更ボタン押下時のハンドラ
+func (ab *accountBook) updatePurchasedItemHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		code := http.StatusMethodNotAllowed
+		http.Error(w, http.StatusText(code), code)
+		return
+	}
+
+	//加工し易いよう、key:カラム名とする
+	sqlSet := make(map[string]string)
+
+	//入力フォームの情報取得
+	purchaseItemID, err := strconv.Atoi(r.FormValue("purchaseItemID"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if r.FormValue("month") != "" {
+		//pi.Month = r.FormValue("month")
+		sqlSet["month"] = r.FormValue("month")
+	}
+
+	if r.FormValue("purchasedOn") != "" {
+		purchasedOn, err := time.Parse("2006-01-02", r.FormValue("purchasedOn"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		//pi.PurchasedOn = &purchasedOn
+		sqlSet["purchased_on"] = purchasedOn.Format("2006-01-02")
+	}
+
+	if r.FormValue("shop") != "" {
+		//pi.Shop = r.FormValue("shop")
+		sqlSet["shop"] = r.FormValue("shop")
+	}
+
+	if r.FormValue("category") != "" {
+		//pi.Category = r.FormValue("category")
+		sqlSet["category"] = r.FormValue("category")
+	}
+
+	if r.FormValue("itemName") != "" {
+		//pi.ItemName = r.FormValue("itemName")
+		sqlSet["item_name"] = r.FormValue("itemName")
+	}
+
+	if r.FormValue("quantity") != "" {
+		//pi.Quantity = uint16(quantity)
+		sqlSet["quantity"] = r.FormValue("quantity")
+	}
+
+	if r.FormValue("incTax") != "" {
+		sqlSet["price_including_tax"] = r.FormValue("incTax")
+	}
+
+	if r.FormValue("disposal") == "1" {
+		sqlSet["item_status_id"] = "255"
+	}
+
+	if r.FormValue("delete") == "1" {
+		sqlSet["is_deleted"] = "true"
+	}
+
+	//変更箇所なし
+	if len(sqlSet) == 0 {
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+
+	tx, _ := ab.db.Begin()
+	defer func() {
+		if recover() != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err := ab.updatePurchasedItem(purchaseItemID, sqlSet, tx); err != nil {
+		tx.Rollback()
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	tx.Commit()
+
+	http.Redirect(w, r, "/", http.StatusFound)
+
+}
+
 //使用品 追加ボタン押下時のハンドラ
 func (ab *accountBook) addUsedItemHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
