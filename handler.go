@@ -172,8 +172,7 @@ func (ab *accountBook) updatePurchasedItemHandler(w http.ResponseWriter, r *http
 	}
 
 	if r.FormValue("month") != "" {
-		//pi.Month = r.FormValue("month")
-		sqlSet["month"] = r.FormValue("month")
+		sqlSet["month"] = fmt.Sprintf("%q", r.FormValue("month"))
 	}
 
 	if r.FormValue("purchasedOn") != "" {
@@ -182,13 +181,11 @@ func (ab *accountBook) updatePurchasedItemHandler(w http.ResponseWriter, r *http
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		//pi.PurchasedOn = &purchasedOn
-		sqlSet["purchased_on"] = purchasedOn.Format("2006-01-02")
+		sqlSet["purchased_on"] = fmt.Sprintf("%q", purchasedOn.Format("2006-01-02"))
 	}
 
 	if r.FormValue("shop") != "" {
-		//pi.Shop = r.FormValue("shop")
-		sqlSet["shop"] = r.FormValue("shop")
+		sqlSet["shop"] = fmt.Sprintf("%q", r.FormValue("shop"))
 	}
 
 	if r.FormValue("category") != "" {
@@ -198,7 +195,7 @@ func (ab *accountBook) updatePurchasedItemHandler(w http.ResponseWriter, r *http
 
 	if r.FormValue("itemName") != "" {
 		//pi.ItemName = r.FormValue("itemName")
-		sqlSet["item_name"] = r.FormValue("itemName")
+		sqlSet["item_name"] = fmt.Sprintf("%q", r.FormValue("itemName"))
 	}
 
 	if r.FormValue("quantity") != "" {
