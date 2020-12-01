@@ -51,7 +51,6 @@ func (ab *accountBook) getPurchasedItems() ([]*Item, error) {
 			return nil, err
 		}
 
-		i.RemainingQuantity = i.Quantity - usedQuantity
 		i.UsedRate = fmt.Sprintf("%.0f %%", (float64(usedQuantity)/float64(i.Quantity))*100.0)
 		i.UsedItems = uis
 
