@@ -50,7 +50,7 @@
                 <div id="quantity">
                     <label for="quantity">個数*</label>
                     <br />
-                    <input name="quantity" type="number" required>
+                    <input name="quantity" type="number" min="1" required>
                 </div>
                 <span id="excTaxSet">
                     <div id="excTax">
@@ -105,45 +105,56 @@
                 <th class="noBorder">購入品</th>
                 <th class="noBorder">使用数</th>
             </tr>
-            {{- range .}}
-            <tr class="purchasedItem {{- if or (eq .ItemStatus "使用済") (eq .ItemStatus "廃棄")}} grayOut {{- end}}">
-                <td>{{.Month}}</td>
-                <td>{{.PurchasedOn | formatDate}}</td>
-                <td colspan="4" class="noCenter">{{.Shop}}</td>
-                <td>{{.Category}}</td>
-                <td class="noCenter">{{.ItemName}}</td>
-                <td>{{.Quantity}}</td>
-                <td>{{.PriceIncludingTax | formatYen}}</td>
-                <td>{{.ItemStatus}}
-                    {{- if eq .ItemStatus "使用中" }}<br />{{.UsedRate}}</td>{{- end}}
+            {{- range $pi := . }}
+            <tr class="purchasedItem {{- if or (eq $pi.ItemStatus "使用済") (eq $pi.ItemStatus "廃棄")}} grayOut {{- end}}">
+                <td>{{$pi.Month}}</td>
+                <td>{{$pi.PurchasedOn | formatDate}}</td>
+                <td colspan="4" class="noCenter">{{$pi.Shop}}</td>
+                <td>{{$pi.Category}}</td>
+                <td class="noCenter">{{$pi.ItemName}}</td>
+                <td>{{$pi.Quantity}}</td>
+                <td>{{$pi.PriceIncludingTax | formatYen}}</td>
+                <td>{{$pi.ItemStatus}}
+                    {{- if eq $pi.ItemStatus "使用中" }}<br />{{$pi.UsedRate}}</td>{{- end}}
                 <td class="noBorder">
-                    <button class="updatePurchasedItemBtn" type="submit">
+                    <button class="updatePurchasedItemBtn" type="submit"
+                        data-id="{{$pi.ID}}"
+                        data-month="{{$pi.Month}}"
+                        data-purchased-on="{{$pi.PurchasedOn}}"
+                        data-shop="{{$pi.Shop}}"
+                        data-category="{{$pi.Category}}"
+                        data-item-name="{{$pi.ItemName}}"
+                        data-quantity="{{$pi.Quantity}}"
+                        data-price-including-tax="{{$pi.PriceIncludingTax}}"
+                    >
                         変更
                     </button>
                 </td>
                 <td class="noBorder">
-                    <button class="addUsedItemBtn" type="submit" data-id="{{.ID}}" {{- if or (eq .ItemStatus "使用済") (eq .ItemStatus "廃棄")}} disabled="disabled"{{- end}}>
+                    <button class="addUsedItemBtn" type="submit" data-id="{{$pi.ID}}" data-requantity="{{$pi.RemainingQuantity}}" {{- if or (eq $pi.ItemStatus "使用済") (eq $pi.ItemStatus "廃棄")}} disabled="disabled"{{- end}}>
                         入力
                     </button>
                 </td>
             </tr>
-            {{- range .UsedItems}}
-            <tr class="used">
+            {{- range $ui := $pi.UsedItems}}
+            <tr class="used　{{- if or (eq $pi.ItemStatus "使用済") (eq $pi.ItemStatus "廃棄")}} grayOut {{- end}}">
                 <td class="noBorder"></td>
-                <td>{{.UsedOn | formatDate}}</td>
-                <td>{{.Morning}}</td>
-                <td>{{.Lunch}}</td>
-                <td>{{.Dinner}}</td>
-                <td>{{.Others}}</td>
-                <td colspan="2" class="noCenter">{{.Menu}}</td>
-                <td>{{.Quantity}}</td>
+                <td>{{$ui.UsedOn | formatDate}}</td>
+                <td>{{$ui.Morning}}</td>
+                <td>{{$ui.Lunch}}</td>
+                <td>{{$ui.Dinner}}</td>
+                <td>{{$ui.Others}}</td>
+                <td colspan="2" class="noCenter">{{$ui.Menu}}</td>
+                <td>{{$ui.Quantity}}</td>
+                <td class="noBorder"></td>
+                <td class="noBorder"></td>
                 <td class="noBorder"></td>
                 <td class="noBorder"></td>
             </tr>
             {{- end}}
             {{- end}}
         </table>
-        <!-- modal dialog -->
+        <!-- modal addUsedItemDialog -->
         <div id="addUsedItemDialog" title="使用した数やメニューを入力してください">
             <form method="POST" action="/addUsedItem">
                 <label for="purchaseItemID">購入品ID</label>
@@ -161,10 +172,85 @@
                 <label for="quantity">個数*</label>
                 <input name="quantity" type="number" required>
                 <br />
-                <label for="nemu">メニュー</label>
-                <input name="nemu" type="text">
+                <label for="menu">メニュー</label>
+                <input name="menu" type="text">
                 <br />
                 <input type="submit" value="入力">
+            </form>
+        </div>
+        <!-- modal updateUsedItemDialog -->
+        <div id="updateUsedItemDialog" title="変更したい項目を入力してください">
+            <form method="POST" action="/updatePurchasedItem">
+                <label for="purchaseItemID">購入品ID</label>
+                <input type="number" name="purchaseItemID" readonly>
+                <br />
+                <table>
+                    <tr>
+                        <td width="100"><label for="month">所属月</label></td>
+                        <td id="exMonth" width="250"></td>
+                        <td width="250">
+                            <input name="month" type="month">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="purchasedOn">購入日</label></td>
+                        <td id="exPurchasedOn"></td>
+                        <td>
+                            <input name="purchasedOn" type="date">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="shop">店舗</label></td>
+                        <td id="exShop"></td>
+                        <td>
+                            <input name="shop" type="text">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="category">カテゴリー</label></td>
+                        <td id="exCategory"></td>
+                        <td>
+                            <select name="category">
+                                <option value="">カテゴリーを選択</option>
+                                <option value="001">食品</option>
+                                <option value="002">日用品</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="itemName">購入品</label></td>
+                        <td id="exItemName"></td>
+                        <td>
+                            <input name="itemName" type="text">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="quantity">購入数</label></td>
+                        <td id="exQuantity"></td>
+                        <td>
+                            <input name="quantity" type="number" min="1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="incTax">金額（税込）</label></td>
+                        <td id="exIncTax"></td>
+                        <td>
+                            <input name="incTax" type="number">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <label for="disposal">廃棄</label>
+                            <input name="disposal" type="checkbox" value="1">
+                            <br />
+                            <label for="delete">削除</label>
+                            <input name="delete" type="checkbox" value="1">
+                        </td>
+                    </tr>
+                </table>
+                <input type="submit" value="更新">
             </form>
         </div>
     </body>
